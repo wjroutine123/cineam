@@ -1,4 +1,4 @@
-# test2003
+# Cineam
 
 ## Project setup
 ```
