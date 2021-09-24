@@ -2,24 +2,21 @@
   <div>
     <ul>
       <li v-for="data in list" :key="data.filmId" @click="handleClick(data.filmId)">
-        <div class="l">
         <img class='p' :src="data.poster">
-        <span class="name diat">{{data.name}}</span>
+        <span class="name dist">{{data.name}}</span>
         <span class="item dist">{{data.filmType.name}}</span>
         <p  class="dist" v-show ="data.grade">观众评分:<span class="grade">{{data.grade}}</span></p>
+        <p class="r">购票</p>
         <p class="actors dist">主演：
           <span>{{data.actors|actorFilter}}</span>
         </p>
         <p class="dist">{{data.nation}} | {{data.runtime}}分钟</p>
-        </div>
-        <button class="r">购票</button>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 import http from '@/util/http'
 import Vue from 'vue'
 Vue.filter('actorFilter', (actors) => {
@@ -41,27 +38,12 @@ export default {
         'X-Host': 'mall.film-ticket.film.list'
       }
     }).then(res => {
-      // console.log(res.data.data.films)
       this.list = res.data.data.films
     })
   },
   methods: {
-
     handleClick (id) {
-      // console.log(this.$router)
-      // 1-动态路由-路径跳转
       this.$router.push(`/detail/${id}`) // 跳转页面
-
-      // 2-动态路由-命名路由跳转
-      // this.$router.push({
-      //   name: 'kerwindetail',
-      //   params: {
-      //     myid: id
-      //   }
-      // })
-
-      // 3-query-路径跳转
-      // this.$router.push(`/detail?myid=${id}`) // /detail?myid=4833
     }
   }
 }
@@ -123,6 +105,7 @@ li{
   width: 50px;
   position: relative;
   background-color: #fff;
+  margin-left: 10px;
 }
 .p{
   padding: 0 10px;
