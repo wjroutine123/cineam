@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Film from '@/views/Film'
 import Cinema from '@/views/Cinema'
+import City from '@/views/City'
 import Detail from '@/views/Detail'
 // import Center from '@/views/Center'
 // import Login from '@/views/Login'
@@ -34,6 +35,10 @@ const routes = [
   {
     path: '/cinema',
     component: Cinema
+  },
+  {
+    path: '/city',
+    component: City
   },
   {
     path: '/center',

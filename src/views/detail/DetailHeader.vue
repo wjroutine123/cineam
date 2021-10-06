@@ -1,17 +1,19 @@
 <template>
   <div>
     <div class="h" v-scrolltop = '50'>电影名</div>
-    <div class="back" @click="handleback()"><i class="iconfont icon-back"></i></div>
+    <div class="back" @click="handleback()">
+      <i class="iconfont icon-back"></i>
+    </div>
   </div>
 </template>
 <script>
 import Vue from 'vue'
 Vue.directive('scrolltop', {
   inserted (el, binding) {
-    console.log(el)
+    // console.log(el)
     el.style.display = 'none'
     window.onscroll = () => {
-      console.log(document.documentElement.scrollTop || document.body.scrollTop)
+      // console.log(document.documentElement.scrollTop || document.body.scrollTop)
       if ((document.documentElement.scrollTop || document.body.scrollTop) > binding.value) {
         el.style.display = 'block'
       } else {

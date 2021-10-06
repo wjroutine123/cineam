@@ -1,6 +1,5 @@
 <template>
   <div v-if="filmInfo">
-    <!-- <img :src="filmInfo.poster"> -->
     <detail-header></detail-header>
     <div
       :style="{ backgroundImage: 'url(' + filmInfo.poster + ')' }"
@@ -27,10 +26,10 @@
 
     <div class="distance"></div>
 
-    <p class="title-bar">剧照</p>
+    <p>剧照</p>
     <detail-swiper :slidesperview ="3" sperclass="photos">
-      <div class="swiper-slide" v-for="(item ,index) in filmInfo.photos" :key="index">
-           <div :style="{ backgroundImage: 'url(' + item + ')' }" class="photo"></div>
+      <div class="swiper-slide" v-for="(item ,index) in filmInfo.photos"  :key="index">
+           <div :style="{ backgroundImage: 'url('+item+')' }" class="photo"  @click="clickPreview(index)"></div>
       </div>
     </detail-swiper>
 
@@ -46,6 +45,8 @@ import Vue from 'vue'
 import DetailSwiper from './detail/DetailSwiper'
 import DetailHeader from './detail/DetailHeader'
 import Shop from '../components/shop'
+
+import { ImagePreview } from 'vant'
 Vue.filter('dateFilter', (date) => {
   return moment(date * 1000).format('YYYY-MM-DD')
 })
@@ -64,23 +65,32 @@ export default {
   methods: {
     handClick () {
       this.isShow = !this.isShow
+    },
+    clickPreview (index) {
+      ImagePreview({
+        images: this.filmInfo.photos,
+        startPosition: index,
+        loop: true, // 是否开启循环播放
+        closeable: true, // 是否显示关闭图标
+        closeIconPosition: 'top-left' // 关闭图标位置
+      })
     }
   },
   mounted () {
-    // 动态路由获取参数
-    console.log(this.$route.params.myid) // 当前匹配的路由对象
-
-    // query 获取参数
-    // console.log(this.$route.query.myid)
-    console.log('利用传来的id，根据后端的接口，拿回对应id的详细信息')
+    // Toast.loading({
+    //   message: '加载中...',
+    //   forbidClick: true,
+    //   overlay: true,
+    //   duration: 0
+    // })
     http({
       url: `/gateway?filmId=${this.$route.params.myid}&k=6010073`,
       headers: {
         'X-Host': 'mall.film-ticket.film.info'
       }
     }).then(res => {
-      console.log(res.data.data.film)
       this.filmInfo = res.data.data.film
+      // Toast.clear()
     })
   }
 }
@@ -125,10 +135,6 @@ export default {
 .distance {
   height: 10px;
   background-color: #f5f5f5;
-}
-.title-bar {
-    width: 100%;
-    padding: 15px;
 }
 .photo{
     height: 100px;

@@ -1,19 +1,36 @@
-<template>
-  <div :style="{height:height}" class="cinbox">
-    <ul>
-      <li v-for="item in cineam" :key="item.cinemaId">
-          <span class="cinema-name p">{{item.name}}</span><br>
-           <p class="price">￥{{item.lowPrice |numFilter}}起</p>
-          <p class="cinema-address p">{{item.address}}</p>
 
-      </li>
-    </ul>
-  </div>
+<template>
+    <div>
+        <van-nav-bar title="影院">
+        <template #left>{{$store.state.cityName}}
+          <div @click="handleClickCity">
+            <van-icon name="arrow-down" color="#000"/>
+          </div>
+          </template>
+          <template #right>
+          <van-icon name="search" size="22" color="#000" />
+          </template>
+        </van-nav-bar>
+
+        <div :style="{height:height}" class="cinbox">
+        <ul>
+          <li v-for="item in cineam" :key="item.cinemaId">
+              <span class="cinema-name p">{{item.name}}</span><br>
+              <p class="price">￥{{item.lowPrice |numFilter}}起</p>
+              <p class="cinema-address p">{{item.address}}</p>
+          </li>
+        </ul>
+        </div>
+    </div>
 </template>
+
 <script>
 import http from '@/util/http'
 import Vue from 'vue'
 import BetterScroll from 'better-scroll'
+import { NavBar, Icon } from 'vant'
+
+Vue.use(NavBar).use(Icon)
 Vue.filter('numFilter', (lowPrice) => {
   return parseFloat((lowPrice / 100).toFixed(1))
 })
@@ -21,12 +38,18 @@ export default {
   data () {
     return {
       cineam: [],
-      height: document.documentElement.clientHeight - 50 + 'px'
+      height: document.documentElement.clientHeight - 50 - 50 + 'px'
+    }
+  },
+  methods: {
+    handleClickCity () {
+      this.$router.push('./city')
     }
   },
   mounted () {
+    // this.height =
     http({
-      url: '/gateway?cityId=110100&ticketFlag=1&k=170564',
+      url: `/gateway?cityId=${this.$store.state.cityId}&ticketFlag=1&k=1705641`,
       headers: {
         'X-Host': 'mall.film-ticket.cinema.list'
       }
@@ -36,7 +59,7 @@ export default {
         new BetterScroll('.cinbox', {
           scrollbar: {
             fade: true,
-            interactive: false // 1.8.0 新增
+            interactive: false
           }
         })
       })

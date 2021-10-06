@@ -3,10 +3,7 @@
     <div class="swiper-wrapper">
       <slot></slot>
     </div>
-
-        <!-- 如果需要分页器 -->
     <div class="swiper-pagination"></div>
-
   </div>
 </template>
 

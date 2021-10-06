@@ -1,24 +1,35 @@
 <template>
   <div>
-    <ul>
-      <li v-for="data in list" :key="data.filmId" @click="handleClick(data.filmId)">
+   <van-list
+    v-model="loading"
+    :immediate-check="false"
+    :finished="finished"
+    @load="Load"
+    finished-text="没有更多了"
+    >
+      <van-cell v-for="data in list" :key="data.filmId" @click="handleClick(data.filmId)" class="list">
         <img class='p' :src="data.poster">
-        <span class="name dist">{{data.name}}</span>
-        <span class="item dist">{{data.filmType.name}}</span>
+        <div class="">
+          <p class="name dist actors">{{data.name}} <span class="item">{{data.filmType.name}}</span></p>
+        </div>
         <p  class="dist" v-show ="data.grade">观众评分:<span class="grade">{{data.grade}}</span></p>
         <p class="r">购票</p>
         <p class="actors dist">主演：
           <span>{{data.actors|actorFilter}}</span>
         </p>
         <p class="dist">{{data.nation}} | {{data.runtime}}分钟</p>
-      </li>
-    </ul>
+      </van-cell >
+   </van-list>
   </div>
 </template>
 
 <script>
 import http from '@/util/http'
 import Vue from 'vue'
+
+import { List, Cell } from 'vant'
+
+Vue.use(List).use(Cell)
 Vue.filter('actorFilter', (actors) => {
   if (!actors) return '暂无主演'
   return actors.map(item => item.name).join(' ')
@@ -28,7 +39,11 @@ export default {
   name: 'Nowplaying',
   data () {
     return {
-      list: []
+      list: [],
+      loading: false,
+      finished: false,
+      pageNum: 1,
+      total: 0
     }
   },
   mounted () {
@@ -39,21 +54,44 @@ export default {
       }
     }).then(res => {
       this.list = res.data.data.films
+      this.total = res.data.data.total
     })
   },
   methods: {
     handleClick (id) {
       this.$router.push(`/detail/${id}`) // 跳转页面
+    },
+    Load () {
+      if (this.list.length === this.total) {
+        this.finished = true
+        return
+      }
+      this.pageNum++
+      http({
+        url: `/gateway?cityId=110100&pageNum=${this.pageNum}&pageSize=10&type=1&k=7653672`,
+        headers: {
+          'X-Host': 'mall.film-ticket.film.list'
+        }
+      }).then(res => {
+        this.list = [...this.list, ...res.data.data.films]
+        this.loading = false
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .l{
-  width: 84.5%;
+  width: 84%;
+}
+.liy{
+  overflow: hidden;
+  text-overflow:ellipsis ;
+  white-space: nowrap;
 }
 .name {
   color: #191a1b;
+  width: 200px;
   font-size: 16px;
   height: 22px;
   line-height: 22px;
@@ -72,7 +110,7 @@ export default {
     color: #ffb232;
     font-size: 14px;
 }
-li{
+.list{
   overflow: hidden;
   padding: 10px;
   font-size: 13px;
@@ -110,4 +148,5 @@ li{
 .p{
   padding: 0 10px;
 }
+
 </style>
